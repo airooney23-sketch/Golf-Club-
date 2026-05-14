@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="클럽리뷰">
+<meta name="theme-color" content="#080808">
+<title>⛳ 클럽 리뷰</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:#090909;color:#fff;font-family:'Noto Sans KR',sans-serif;min-height:100%}
+
+#hdr{background:linear-gradient(150deg,#0c2218,#070d09);border-bottom:1px solid #162018;padding:12px 14px 8px;position:sticky;top:0;z-index:50}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:#4ade80;line-height:1}
+.logo-sub{font-size:9px;color:#2a4a30;letter-spacing:1px;margin-bottom:8px}
+.tabs{display:flex;gap:6px}
+.tab{padding:4px 12px;border-radius:20px;font-size:11px;cursor:pointer;border:1px solid #1a2a1a;background:transparent;color:#3a5a3a;font-family:'Noto Sans KR',sans-serif;transition:all .15s}
+.tab.on{background:#4ade80;color:#000;font-weight:700;border-color:transparent}
+
+.view{display:none;padding-bottom:70px}
+.view.on{display:block}
+
+/* Photo */
+.photo-zone{margin:10px 12px;border:2px dashed #1e3a2a;border-radius:10px;background:#090f0a;cursor:pointer;overflow:hidden;min-height:76px;display:flex;align-items:center;justify-content:center;position:relative}
+.photo-zone img{width:100%;display:block;border-radius:8px}
+.photo-ph{text-align:center;padding:14px}
+.photo-ph .pi{font-size:26px;margin-bottom:3px}
+.photo-ph .pt{font-size:12px;color:#4ade80;font-weight:700;margin-bottom:1px}
+.photo-ph .ps{font-size:10px;color:#2a4a2a}
+.photo-clear{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.75);border:none;color:#888;font-size:15px;border-radius:50%;width:24px;height:24px;cursor:pointer;display:none;align-items:center;justify-content:center}
+
+/* Card */
+.card{margin:0 12px 8px;background:#0d0d0d;border-radius:10px;padding:12px;border:1px solid #191919}
+.clabel{font-size:9px;color:#2a4a2a;letter-spacing:1px;margin-bottom:6px}
+input[type=text],input[type=number],input[type=date]{background:#070707;border:1px solid #1e1e1e;border-radius:7px;color:#fff;padding:8px 10px;font-family:'Noto Sans KR',sans-serif;outline:none;-webkit-appearance:none;width:100%}
+input[type=text]{font-size:14px;font-weight:700;margin-bottom:7px}
+input[type=date]{font-size:12px;color-scheme:dark;flex:1}
+.tinput{font-family:'Bebas Neue',sans-serif!important;font-size:20px!important;color:#4ade80!important;text-align:center;letter-spacing:2px;flex:1}
+.row{display:flex;gap:7px}
+
+/* Legend */
+.legend{margin:0 12px 6px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:9px;color:#2a4a2a}
+.lbadge{background:#1a2a1a;padding:1px 6px;border-radius:3px;color:#4ade80}
+
+/* Group */
+.gsec{margin-bottom:8px;background:#0a0a0a}
+.ghdr{display:flex;align-items:center;justify-content:space-between;padding:6px 12px;border-left:4px solid}
+.gname{font-size:11px;font-weight:700;letter-spacing:1px}
+.gavg{font-size:11px;font-weight:700}
+
+/* Club row */
+.crow{display:flex;align-items:center;gap:5px;padding:8px 12px;border-bottom:1px solid #111;flex-wrap:wrap}
+.cicon{width:22px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.cname{width:82px;font-size:12px;flex-shrink:0;color:#bbb;font-weight:500}
+.cname.na{color:#242424;text-decoration:line-through}
+.nabtn{padding:2px 6px;border-radius:4px;font-size:10px;font-weight:700;border:1px solid #242424;background:transparent;color:#333;cursor:pointer;flex-shrink:0;font-family:'Noto Sans KR',sans-serif;transition:all .12s}
+.nabtn.on{color:#000;border-color:transparent}
+.sbts{display:flex;gap:3px}
+.sbtn{width:28px;height:28px;border-radius:50%;border:2px solid #242424;background:#0a0a0a;color:#3a3a3a;font-weight:700;font-size:12px;cursor:pointer;transition:all .12s;flex-shrink:0}
+.sbtn.on{transform:scale(1.2);color:#000;border-color:transparent}
+.nalbl{font-size:9px;color:#242424;font-style:italic}
+.mrow{padding:0 12px 8px 46px;display:none}
+.slbl{font-size:11px;margin-bottom:3px;font-weight:700}
+.minp{width:100%;background:#0d0d0d;border-radius:6px;color:#fff;font-size:13px;font-weight:500;padding:6px 9px;border:1px solid #2a2a2a;font-family:'Noto Sans KR',sans-serif;outline:none;line-height:1.5}
+.minp::placeholder{color:#3a3a3a}
+#f-comment::placeholder{color:#3a3a3a}
+
+/* Summary */
+.sumcard{margin:10px 12px 0;background:#0a160c;border:1px solid #1a3a22;border-radius:10px;padding:12px;display:none;align-items:center;justify-content:space-between;gap:8px}
+.sumscore{font-family:'Bebas Neue',sans-serif;font-size:32px;color:#4ade80;line-height:1}
+.sumlbl{font-size:9px;color:#2a4a2a}
+
+/* Save */
+.savebtn{width:calc(100% - 24px);margin:10px 12px 0;padding:12px;border-radius:10px;border:none;background:#0e0e0e;color:#242424;font-weight:900;font-size:13px;cursor:default;font-family:'Noto Sans KR',sans-serif;letter-spacing:1px;transition:all .2s}
+.savebtn.on{background:linear-gradient(135deg,#4ade80,#16a34a);color:#000;cursor:pointer;box-shadow:0 4px 16px #4ade8028}
+
+/* History */
+.hlist{padding:12px;display:flex;flex-direction:column;gap:8px}
+.hempty{text-align:center;padding:60px 20px}
+.rcard{background:#0b0b0b;border:1px solid #161616;border-radius:10px;padding:12px 14px;cursor:pointer}
+.rcard-top{display:flex;justify-content:space-between;align-items:flex-start}
+.rcourse{font-weight:700;font-size:15px;color:#e0e0e0;margin-bottom:2px}
+.rmeta{font-size:10px;color:#333}
+.rscore{font-family:'Bebas Neue',sans-serif;font-size:28px;line-height:1}
+.rclub{font-size:10px;color:#4ade80}
+.ractions{display:flex;gap:6px;margin-top:10px;border-top:1px solid #161616;padding-top:10px}
+.raction{flex:1;padding:7px;border-radius:8px;border:none;font-size:12px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:700;transition:all .15s}
+.raction.edit{background:#1a2a1a;color:#4ade80}
+.raction.del{background:#1a0a0a;color:#f87171}
+
+/* Detail */
+.dtwrap{padding:12px}
+.backbtn{background:transparent;border:1px solid #1a1a1a;border-radius:7px;color:#444;padding:4px 10px;font-size:11px;cursor:pointer;margin-bottom:12px;font-family:'Noto Sans KR',sans-serif}
+.d-actions{display:flex;gap:8px;margin-top:8px}
+.d-btn{flex:1;padding:11px;border-radius:9px;border:none;font-size:12px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:700}
+.d-btn.share{background:#1a1a3a;color:#60a5fa}
+
+/* Share overlay */
+#share-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:500;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px}
+#share-overlay.on{display:flex}
+#share-img{max-width:100%;max-height:60vh;border-radius:12px;box-shadow:0 8px 40px #000}
+.share-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.share-action{padding:10px 20px;border-radius:10px;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif}
+.share-action.kakao{background:#fee500;color:#3c1e1e}
+.share-action.save{background:#4ade80;color:#000}
+.share-action.close{background:#1a1a1a;color:#888;border:1px solid #333}
+
+/* Toast */
+#toast{position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:#4ade80;color:#000;font-weight:700;padding:9px 18px;border-radius:20px;font-size:13px;font-family:'Noto Sans KR',sans-serif;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+#toast.on{opacity:1}
+
+/* Edit mode banner */
+#edit-banner{display:none;margin:0 12px 8px;background:#1a2a1a;border:1px solid #2a4a2a;border-radius:8px;padding:8px 12px;font-size:11px;color:#4ade80;font-family:'Noto Sans KR',sans-serif;align-items:center;gap:8px}
+#edit-banner.on{display:flex}
+.cancel-edit{margin-left:auto;background:transparent;border:1px solid #2a4a2a;color:#4ade80;padding:3px 8px;border-radius:5px;font-size:10px;cursor:pointer;font-family:'Noto Sans KR',sans-serif}
+
+/* iOS hint */
+#ios-hint{display:none;position:fixed;bottom:0;left:0;right:0;background:#0d2b1a;border-top:1px solid #1e3a2a;padding:10px 14px;z-index:200;font-size:11px;color:#4ade80;font-family:'Noto Sans KR',sans-serif;align-items:center;gap:8px}
+#ios-hint.on{display:flex}
+.hclose{background:none;border:none;color:#3a5a40;font-size:18px;cursor:pointer;margin-left:auto}
+
+/* Radar */
+svg.radar{overflow:visible;flex-shrink:0}
+.dots{display:flex;gap:2px;align-items:center}
+.dot{width:9px;height:9px;border-radius:50%}
+</style>
+</head>
+<body>
+
+<div id="share-overlay">
+  <div style="font-size:13px;color:#4ade80;font-weight:700;font-family:'Noto Sans KR',sans-serif">📤 공유할 이미지</div>
+  <img id="share-img" src="">
+  <div class="share-btns">
+    <button class="share-action save" onclick="saveShareImg()">📥 이미지 저장</button>
+    <button class="share-action kakao" onclick="shareNative()">📨 공유하기</button>
+    <button class="share-action close" onclick="document.getElementById('share-overlay').classList.remove('on')">✕ 닫기</button>
+  </div>
+  <div style="font-size:10px;color:#333;font-family:'Noto Sans KR',sans-serif;text-align:center">이미지 저장 후 카톡에서 첨부하거나<br>공유하기로 바로 전송하세요</div>
+</div>
+
+<div id="toast"></div>
+
+<div id="ios-hint">
+  📱 Safari → 공유(□↑) → <b style="margin:0 3px">홈 화면에 추가</b> 로 앱처럼 쓸 수 있어요!
+  <button class="hclose" onclick="this.parentElement.classList.remove('on')">✕</button>
+</div>
+
+<!-- Header -->
+<div id="hdr">
+  <div class="logo">⛳ CLUB REVIEW</div>
+  <div class="logo-sub">이세현의 골프 클럽 성능 기록</div>
+  <div class="tabs">
+    <button class="tab on" onclick="goView('form',this)">📝 새 기록</button>
+    <button class="tab" id="htab" onclick="goView('history',this)">📋 기록 (0)</button>
+    <button class="tab" onclick="goView('stats',this)">📊 통계</button>
+    <button class="tab" id="vtab" onclick="goView('video',this)">🎬 영상</button>
+  </div>
+</div>
+
+<!-- ════ FORM ════ -->
+<div class="view on" id="view-form">
+
+  <!-- Edit banner -->
+  <div id="edit-banner">
+    ✏️ 수정 모드 — 변경 후 저장하세요
+    <button class="cancel-edit" onclick="cancelEdit()">취소</button>
+  </div>
+
+  <input type="file" id="photo-inp" accept="image/*" style="display:none">
+  <div class="photo-zone" id="photo-zone" onclick="document.getElementById('photo-inp').click()">
+    <div class="photo-ph" id="photo-ph">
+      <div class="pi">📸</div>
+      <div class="pt">스코어카드 / 연습장 사진 업로드</div>
+      <div class="ps">탭하면 카메라 / 갤러리 열림</div>
+    </div>
+    <img id="photo-img" style="display:none">
+    <button class="photo-clear" id="photo-clear" onclick="clearPhoto(event)">✕</button>
+  </div>
+
+  <div class="card">
+    <div class="clabel">경기 / 연습 정보</div>
+    <input type="text" id="f-course" placeholder="골프장 / 연습장 이름" oninput="chkSave()">
+    <div class="row">
+      <input type="date" id="f-date">
+      <input type="number" id="f-score" class="tinput" placeholder="타수" oninput="chkSave()">
+    </div>
+  </div>
+
+  <div class="legend">
+    <span>💡</span><span class="lbadge">N/A = 미사용</span>
+    <span style="color:#1a3a1a">|</span>
+    <span style="color:#f87171">●</span><span>1~2 나쁨</span>
+    <span style="color:#facc15">●</span><span>3 보통</span>
+    <span style="color:#4ade80">●</span><span>4~5 좋음</span>
+  </div>
+
+  <div id="clubs"></div>
+
+  <div class="sumcard" id="sumcard">
+    <div>
+      <div class="sumlbl" id="summeta"></div>
+      <div class="sumscore" id="sumavg">-</div>
+      <div class="sumlbl">종합 클럽 평점</div>
+    </div>
+    <svg class="radar" width="155" height="155" id="radar-f"></svg>
+  </div>
+
+  <!-- 전체 코멘트 -->
+  <div class="card" style="margin-top:10px">
+    <div class="clabel">📝 오늘 경기 / 연습 총평</div>
+    <textarea id="f-comment"
+      placeholder="오늘 경기 또는 연습 소감, 느낀 점, 다음 목표 등을 자유롭게 적어보세요..."
+      oninput="chkSave()"
+      style="width:100%;background:#0d0d0d;border:1px solid #2a2a2a;border-radius:7px;
+             color:#fff;font-size:13px;font-weight:500;padding:10px;font-family:'Noto Sans KR',sans-serif;
+             outline:none;resize:none;min-height:90px;line-height:1.6;
+             -webkit-appearance:none"></textarea>
+  </div>
+
+  <button class="savebtn" id="savebtn" onclick="doSave()">💾 경기 기록 저장</button>
+</div>
+
+<!-- ════ HISTORY ════ -->
+<div class="view" id="view-history">
+  <div id="hcontent"></div>
+</div>
+
+<!-- ════ STATS ════ -->
+<div class="view" id="view-stats">
+  <div id="scontent" style="padding:12px 12px 20px"></div>
+</div>
+
+<!-- ════ VIDEO ════ -->
+<div class="view" id="view-video">
+  <div id="vcontent" style="padding:12px 12px 20px">
+
+    <!-- 영상 추가 폼 -->
+    <div style="background:#0d0d0d;border-radius:10px;padding:14px;border:1px solid #1a1a1a;margin-bottom:14px">
+      <div style="font-size:10px;color:#2a4a2a;letter-spacing:1px;margin-bottom:10px">🎬 새 영상 추가</div>
+
+      <!-- 카테고리 -->
+      <div style="display:flex;gap:6px;margin-bottom:10px" id="vcat-btns">
+        <button onclick="selectVCat('field')" id="vcat-field"
+          style="flex:1;padding:7px;border-radius:8px;border:1px solid #1e3a2a;background:transparent;color:#3a5a3a;font-size:11px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:700">⛳ 필드</button>
+        <button onclick="selectVCat('practice')" id="vcat-practice"
+          style="flex:1;padding:7px;border-radius:8px;border:1px solid #1a2a3a;background:transparent;color:#3a4a5a;font-size:11px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:700">🏌️ 연습장</button>
+        <button onclick="selectVCat('other')" id="vcat-other"
+          style="flex:1;padding:7px;border-radius:8px;border:1px solid #2a1a3a;background:transparent;color:#4a3a5a;font-size:11px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:700">📹 기타</button>
+      </div>
+
+      <input type="text" id="v-title" placeholder="제목 (예: 드라이버 스윙 교정)"
+        style="width:100%;background:#070707;border:1px solid #1e1e1e;border-radius:7px;color:#fff;font-size:13px;font-weight:600;padding:8px 10px;margin-bottom:8px;font-family:'Noto Sans KR',sans-serif;outline:none;-webkit-appearance:none">
+      <input type="text" id="v-date" placeholder="날짜 (예: 2026-05-14)"
+        style="width:100%;background:#070707;border:1px solid #1e1e1e;border-radius:7px;color:#fff;font-size:12px;padding:8px 10px;margin-bottom:8px;font-family:'Noto Sans KR',sans-serif;outline:none;-webkit-appearance:none">
+      <input type="text" id="v-url" placeholder="유튜브 링크 붙여넣기 (https://youtu.be/...)"
+        style="width:100%;background:#070707;border:1px solid #1e1e1e;border-radius:7px;color:#4ade80;font-size:12px;padding:8px 10px;margin-bottom:10px;font-family:'Noto Sans KR',sans-serif;outline:none;-webkit-appearance:none">
+      <textarea id="v-memo" placeholder="메모 (예: 백스윙 너무 빠름, 체중이동 부족...)"
+        style="width:100%;background:#070707;border:1px solid #1e1e1e;border-radius:7px;color:#fff;font-size:12px;padding:8px 10px;margin-bottom:10px;font-family:'Noto Sans KR',sans-serif;outline:none;resize:none;min-height:60px;line-height:1.5;-webkit-appearance:none"></textarea>
+      <button onclick="addVideo()"
+        style="width:100%;padding:11px;border-radius:9px;border:none;background:linear-gradient(135deg,#4ade80,#16a34a);color:#000;font-weight:900;font-size:13px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;letter-spacing:1px">
+        ➕ 영상 추가
+      </button>
+    </div>
+
+    <!-- 필터 -->
+    <div style="display:flex;gap:6px;margin-bottom:12px">
+      <button onclick="filterVideo('all')" id="vf-all"
+        style="padding:4px 12px;border-radius:20px;border:none;background:#4ade80;color:#000;font-size:11px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif">전체</button>
+      <button onclick="filterVideo('field')" id="vf-field"
+        style="padding:4px 12px;border-radius:20px;border:1px solid #1e3a2a;background:transparent;color:#3a5a3a;font-size:11px;cursor:pointer;font-family:'Noto Sans KR',sans-serif">⛳ 필드</button>
+      <button onclick="filterVideo('practice')" id="vf-practice"
+        style="padding:4px 12px;border-radius:20px;border:1px solid #1a2a3a;background:transparent;color:#3a4a5a;font-size:11px;cursor:pointer;font-family:'Noto Sans KR',sans-serif">🏌️ 연습장</button>
+      <button onclick="filterVideo('other')" id="vf-other"
+        style="padding:4px 12px;border-radius:20px;border:1px solid #2a1a3a;background:transparent;color:#4a3a5a;font-size:11px;cursor:pointer;font-family:'Noto Sans KR',sans-serif">📹 기타</button>
+    </div>
+
+    <!-- 영상 목록 -->
+    <div id="vlist"></div>
+  </div>
+</div>
+
+<!-- ════ DETAIL ════ -->
+<div class="view" id="view-detail">
+  <div class="dtwrap" id="dcontent"></div>
+</div>
+
+<script>
+// ── Club data ─────────────────────────────────────────────────────────────
+const CLUBS = [
+  {id:"driver", label:"드라이버",   emoji:"🏌️", group:"woods"},
+  {id:"wood3",  label:"3번 우드",   emoji:"🪵",  group:"woods"},
+  {id:"util3",  label:"3번 유틸",   emoji:"🔧",  group:"util"},
+  {id:"iron4",  label:"4번 아이언", emoji:"⚙️",  group:"iron"},
+  {id:"iron5",  label:"5번 아이언", emoji:"⚙️",  group:"iron"},
+  {id:"iron6",  label:"6번 아이언", emoji:"⚙️",  group:"iron"},
+  {id:"iron7",  label:"7번 아이언", emoji:"⚙️",  group:"iron"},
+  {id:"iron8",  label:"8번 아이언", emoji:"⚙️",  group:"iron"},
+  {id:"iron9",  label:"9번 아이언", emoji:"⚙️",  group:"iron"},
+  {id:"ironP",  label:"P 아이언",   emoji:"⚙️",  group:"iron"},
+  {id:"w50",    label:"50도 웨지",  emoji:"🔑",  group:"wedge"},
+  {id:"w56",    label:"56도 웨지",  emoji:"🔑",  group:"wedge"},
+  {id:"w60",    label:"60도 웨지",  emoji:"🔑",  group:"wedge"},
+  {id:"putter", label:"퍼터",       emoji:"🎯",  group:"putter"},
+];
+
+const GROUPS = [
+  {id:"woods", label:"우드",     bg:"#1a3a2a", accent:"#4ade80", light:"#bbf7d0"},
+  {id:"util",  label:"유틸리티", bg:"#1a2a3a", accent:"#60a5fa", light:"#bfdbfe"},
+  {id:"iron",  label:"아이언",   bg:"#2a1a3a", accent:"#a78bfa", light:"#ddd6fe"},
+  {id:"wedge", label:"웨지",     bg:"#3a2a1a", accent:"#fb923c", light:"#fed7aa"},
+  {id:"putter",label:"퍼터",     bg:"#2a1a1a", accent:"#f87171", light:"#fecaca"},
+];
+
+const SLABELS = ["","😞 매우 나쁨","😕 나쁨","😐 보통","🙂 좋음","😄 최고!"];
+const KEY = "golf_v5";
+
+// ── State ─────────────────────────────────────────────────────────────────
+let rounds = [];
+let S = {};          // scores
+let M = {};          // memos
+let photoDataUrl = null;
+let editingId = null; // null = new record, number = editing existing
+
+// ── Storage ───────────────────────────────────────────────────────────────
+function load() { try { rounds = JSON.parse(localStorage.getItem(KEY)||"[]"); } catch { rounds=[]; } }
+function persist() { localStorage.setItem(KEY, JSON.stringify(rounds)); }
+
+// ── Nav ───────────────────────────────────────────────────────────────────
+function goView(name, btn) {
+  document.querySelectorAll(".view").forEach(v => v.classList.remove("on"));
+  document.getElementById("view-"+name).classList.add("on");
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("on"));
+  if (btn) btn.classList.add("on");
+  if (name === "history") renderHistory();
+  if (name === "stats") renderStats();
+  if (name === "video") { renderVideoList(); selectVCat(vCat); filterVideo(vFilter); }
+  window.scrollTo(0,0);
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("on");
+  setTimeout(() => t.classList.remove("on"), 2000);
+}
+
+// ── Photo ─────────────────────────────────────────────────────────────────
+document.getElementById("photo-inp").addEventListener("change", function(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    photoDataUrl = ev.target.result;
+    document.getElementById("photo-img").src = photoDataUrl;
+    document.getElementById("photo-img").style.display = "block";
+    document.getElementById("photo-ph").style.display = "none";
+    document.getElementById("photo-clear").style.display = "flex";
+  };
+  reader.readAsDataURL(file);
+  e.target.value = "";
+});
+
+function clearPhoto(e) {
+  if (e && e.stopPropagation) e.stopPropagation();
+  photoDataUrl = null;
+  document.getElementById("photo-img").src = "";
+  document.getElementById("photo-img").style.display = "none";
+  document.getElementById("photo-ph").style.display = "block";
+  document.getElementById("photo-clear").style.display = "none";
+}
+
+// ── Build club rows ───────────────────────────────────────────────────────
+function buildClubs() {
+  const container = document.getElementById("clubs");
+  container.innerHTML = "";
+  GROUPS.forEach(g => {
+    const sec = document.createElement("div"); sec.className = "gsec";
+    const hdr = document.createElement("div"); hdr.className = "ghdr";
+    hdr.style.cssText = `background:${g.bg};border-left-color:${g.accent}`;
+    hdr.innerHTML = `<span class="gname" style="color:${g.accent}">${g.label}</span>
+      <div style="display:flex;gap:6px;align-items:center">
+        <span style="font-size:9px;color:#333" id="gna-${g.id}"></span>
+        <span class="gavg" style="color:${g.light}" id="gavg-${g.id}"></span>
+      </div>`;
+    sec.appendChild(hdr);
+
+    CLUBS.filter(c => c.group === g.id).forEach(c => {
+      const row = document.createElement("div"); row.className = "crow";
+      row.innerHTML = `
+        <div class="cicon" style="font-size:16px">${c.emoji}</div>
+        <span class="cname" id="cn-${c.id}">${c.label}</span>
+        <button class="nabtn" id="na-${c.id}" onclick="togNA('${c.id}','${g.accent}','${g.id}')">N/A</button>
+        <div class="sbts" id="sb-${c.id}">
+          ${[1,2,3,4,5].map(v=>`<button class="sbtn" id="s${c.id}-${v}"
+            onclick="setS('${c.id}',${v},'${g.accent}','${g.id}')">${v}</button>`).join("")}
+        </div>
+        <span class="nalbl" id="nl-${c.id}" style="display:none">미사용</span>`;
+      const mrow = document.createElement("div"); mrow.className = "mrow"; mrow.id = "mr-"+c.id;
+      mrow.innerHTML = `<div class="slbl" id="sl-${c.id}" style="color:${g.accent}"></div>
+        <input class="minp" id="mi-${c.id}" placeholder="메모 (예: 슬라이스 심함...)"
+          style="border-color:${g.accent}22" oninput="M['${c.id}']=this.value">`;
+      sec.appendChild(row); sec.appendChild(mrow);
+    });
+    container.appendChild(sec);
+  });
+}
+
+function togNA(id, accent, gid) {
+  S[id] = (S[id]==="na") ? null : "na";
+  refreshRow(id, accent); refreshGroup(gid); updateSum();
+}
+function setS(id, v, accent, gid) {
+  S[id] = (S[id]===v) ? null : v;
+  refreshRow(id, accent); refreshGroup(gid); updateSum();
+}
+
+function scoreColor(v) {
+  if (v <= 2) return "#f87171"; // 빨강
+  if (v === 3) return "#facc15"; // 노랑
+  return "#4ade80";              // 초록
+}
+
+function refreshRow(id, accent) {
+  const s = S[id], isNA = s==="na", num = typeof s==="number" ? s : null;
+  const cn = document.getElementById("cn-"+id);
+  if (cn) cn.className = "cname"+(isNA?" na":"");
+  const na = document.getElementById("na-"+id);
+  if (na) {
+    na.className = "nabtn"+(isNA?" on":"");
+    na.style.background = isNA ? accent : "transparent";
+    na.style.color = isNA ? "#000" : "#333";
+  }
+  const sbDiv = document.getElementById("sb-"+id);
+  const nlDiv = document.getElementById("nl-"+id);
+  if (sbDiv) sbDiv.style.display = isNA ? "none" : "flex";
+  if (nlDiv) nlDiv.style.display = isNA ? "inline" : "none";
+  [1,2,3,4,5].forEach(v => {
+    const b = document.getElementById(`s${id}-${v}`); if (!b) return;
+    const on = num===v;
+    const col = scoreColor(v);
+    b.className = "sbtn"+(on?" on":"");
+    b.style.background = on ? col : "#0a0a0a";
+    b.style.borderColor = on ? col : `${col}44`;
+    b.style.color = on ? "#000" : col;
+    b.style.transform = on ? "scale(1.2)" : "scale(1)";
+    b.style.boxShadow = on ? `0 0 8px ${col}88` : "none";
+  });
+  const mr = document.getElementById("mr-"+id);
+  const sl = document.getElementById("sl-"+id);
+  const mi = document.getElementById("mi-"+id);
+  if (mr) mr.style.display = num ? "block" : "none";
+  if (sl && num) { sl.textContent = SLABELS[num]; sl.style.color = scoreColor(num); }
+  if (mi && M[id] !== undefined) mi.value = M[id];
+}
+
+function refreshGroup(gid) {
+  const gc = CLUBS.filter(c => c.group===gid);
+  const vals = gc.map(c=>S[c.id]).filter(v=>typeof v==="number"&&v>0);
+  const na = gc.filter(c=>S[c.id]==="na").length;
+  const avgEl = document.getElementById("gavg-"+gid);
+  const naEl  = document.getElementById("gna-"+gid);
+  if (avgEl) avgEl.textContent = vals.length ? `평균 ${(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1)}/5` : "";
+  if (naEl)  naEl.textContent  = na ? `N/A ${na}개` : "";
+}
+
+function avg(scores) {
+  const v = Object.values(scores).filter(x=>typeof x==="number"&&x>0);
+  return v.length ? (v.reduce((a,b)=>a+b,0)/v.length).toFixed(1) : null;
+}
+
+function updateSum() {
+  const a = avg(S);
+  const filled = Object.values(S).filter(v=>typeof v==="number"&&v>0).length;
+  const na = Object.values(S).filter(v=>v==="na").length;
+  const card = document.getElementById("sumcard");
+  if (filled > 0) {
+    card.style.display = "flex";
+    document.getElementById("sumavg").textContent = a+" / 5.0";
+    document.getElementById("summeta").textContent = `${filled}개 평가 · ${na}개 미사용`;
+    drawRadar(S, document.getElementById("radar-f"));
+  } else {
+    card.style.display = "none";
+  }
+  chkSave();
+}
+
+function chkSave() {
+  const c = document.getElementById("f-course").value.trim();
+  const f = Object.values(S).filter(v=>typeof v==="number"&&v>0).length;
+  const btn = document.getElementById("savebtn");
+  btn.className = "savebtn"+(c&&f?" on":"");
+  btn.textContent = editingId ? "✏️ 수정 저장" : "💾 경기 기록 저장";
+}
+
+// ── Radar ─────────────────────────────────────────────────────────────────
+function drawRadar(scores, svg) {
+  if (!svg) return;
+  svg.innerHTML = "";
+  const clubs = CLUBS.filter(c=>scores[c.id]&&scores[c.id]!=="na"&&typeof scores[c.id]==="number");
+  if (clubs.length < 3) return;
+  const cx=77, cy=77, r=55, n=clubs.length, ns="http://www.w3.org/2000/svg";
+  const pts = clubs.map((c,i) => {
+    const a=(i/n)*2*Math.PI-Math.PI/2, v=(scores[c.id]/5)*r;
+    const lb = c.label.replace(" 아이언","").replace("번 우드","W").replace("번 유틸","U").replace("도 웨지","°");
+    return {x:cx+v*Math.cos(a), y:cy+v*Math.sin(a), lx:cx+(r+17)*Math.cos(a), ly:cy+(r+17)*Math.sin(a), label:lb};
+  });
+  const grid = f => clubs.map((_,i)=>{const a=(i/n)*2*Math.PI-Math.PI/2;return`${cx+f*r*Math.cos(a)},${cy+f*r*Math.sin(a)}`;}).join(" ");
+  [.2,.4,.6,.8,1].forEach(f=>{const p=document.createElementNS(ns,"polygon");p.setAttribute("points",grid(f));p.setAttribute("fill","none");p.setAttribute("stroke","#1c1c1c");p.setAttribute("stroke-width","1");svg.appendChild(p);});
+  clubs.forEach((_,i)=>{const a=(i/n)*2*Math.PI-Math.PI/2;const l=document.createElementNS(ns,"line");l.setAttribute("x1",cx);l.setAttribute("y1",cy);l.setAttribute("x2",cx+r*Math.cos(a));l.setAttribute("y2",cy+r*Math.sin(a));l.setAttribute("stroke","#1c1c1c");l.setAttribute("stroke-width","1");svg.appendChild(l);});
+  const po=document.createElementNS(ns,"polygon");po.setAttribute("points",pts.map(p=>`${p.x},${p.y}`).join(" "));po.setAttribute("fill","#4ade8015");po.setAttribute("stroke","#4ade80");po.setAttribute("stroke-width","1.5");svg.appendChild(po);
+  pts.forEach(p=>{const c=document.createElementNS(ns,"circle");c.setAttribute("cx",p.x);c.setAttribute("cy",p.y);c.setAttribute("r","2.5");c.setAttribute("fill","#4ade80");svg.appendChild(c);const t=document.createElementNS(ns,"text");t.setAttribute("x",p.lx);t.setAttribute("y",p.ly);t.setAttribute("text-anchor","middle");t.setAttribute("dominant-baseline","middle");t.setAttribute("font-size","7");t.setAttribute("fill","#555");t.setAttribute("font-family","'Noto Sans KR',sans-serif");t.textContent=p.label;svg.appendChild(t);});
+}
+
+// ── Save / Edit ───────────────────────────────────────────────────────────
+function doSave() {
+  const course = document.getElementById("f-course").value.trim();
+  const filled = Object.values(S).filter(v=>typeof v==="number"&&v>0).length;
+  if (!course || !filled) return;
+
+  const record = {
+    id: editingId || Date.now(),
+    date: document.getElementById("f-date").value,
+    course,
+    totalScore: document.getElementById("f-score").value,
+    scores: {...S}, memos: {...M},
+    avg: avg(S),
+    photo: photoDataUrl,
+    comment: document.getElementById("f-comment").value.trim(),
+  };
+
+  if (editingId) {
+    const idx = rounds.findIndex(r=>r.id===editingId);
+    if (idx !== -1) rounds[idx] = record;
+    toast("✅ 수정 완료!");
+  } else {
+    rounds.unshift(record);
+    toast("✅ 저장 완료!");
+  }
+
+  persist();
+  document.getElementById("htab").textContent = `📋 기록 (${rounds.length})`;
+  resetForm();
+}
+
+function resetForm() {
+  editingId = null;
+  S = {}; M = {};
+  photoDataUrl = null;
+  document.getElementById("f-course").value = "";
+  document.getElementById("f-score").value = "";
+  document.getElementById("f-date").value = new Date().toISOString().slice(0,10);
+  document.getElementById("f-comment").value = "";
+  clearPhoto(null);
+  buildClubs();
+  document.getElementById("sumcard").style.display = "none";
+  document.getElementById("edit-banner").classList.remove("on");
+  chkSave();
+}
+
+function cancelEdit() {
+  resetForm();
+  toast("수정을 취소했습니다");
+}
+
+// ── Load record into form for editing ────────────────────────────────────
+function startEdit(id) {
+  const r = rounds.find(x=>x.id===id);
+  if (!r) return;
+  editingId = id;
+
+  // Fill form
+  document.getElementById("f-course").value = r.course;
+  document.getElementById("f-date").value = r.date || "";
+  document.getElementById("f-score").value = r.totalScore || "";
+  document.getElementById("f-comment").value = r.comment || "";
+
+  // Photo
+  if (r.photo) {
+    photoDataUrl = r.photo;
+    document.getElementById("photo-img").src = r.photo;
+    document.getElementById("photo-img").style.display = "block";
+    document.getElementById("photo-ph").style.display = "none";
+    document.getElementById("photo-clear").style.display = "flex";
+  } else {
+    clearPhoto(null);
+  }
+
+  // Scores & memos
+  S = {...(r.scores||{})};
+  M = {...(r.memos||{})};
+
+  // Re-build UI then refresh each row
+  buildClubs();
+  CLUBS.forEach(c => {
+    const g = GROUPS.find(g=>g.id===c.group);
+    refreshRow(c.id, g.accent);
+  });
+  GROUPS.forEach(g => refreshGroup(g.id));
+  updateSum();
+
+  // Show edit banner
+  document.getElementById("edit-banner").classList.add("on");
+
+  // Switch to form view
+  goView("form", document.querySelectorAll(".tab")[0]);
+}
+
+// ── History ───────────────────────────────────────────────────────────────
+function renderHistory() {
+  const el = document.getElementById("hcontent");
+  if (!rounds.length) {
+    el.innerHTML = `<div class="hempty">
+      <div style="font-size:44px;margin-bottom:8px">⛳</div>
+      <div style="color:#252525;font-size:13px">기록이 없습니다</div>
+      <div style="color:#1a1a1a;font-size:11px;margin-top:4px">새 기록 탭에서 시작해보세요</div>
+    </div>`;
+    return;
+  }
+  el.innerHTML = `<div class="hlist">` + rounds.map(r => {
+    const sc = Number(r.totalScore);
+    const col = sc<=80?"#4ade80":sc<=90?"#facc15":"#fb923c";
+    const f = Object.values(r.scores).filter(v=>typeof v==="number"&&v>0).length;
+    const na = Object.values(r.scores).filter(v=>v==="na").length;
+    return `<div class="rcard">
+      <div class="rcard-top" onclick="showDetail(${r.id})">
+        <div>
+          <div class="rcourse">${r.course}</div>
+          <div class="rmeta">${r.date||""} · ${f}개 평가 · ${na}개 미사용</div>
+        </div>
+        <div style="text-align:right">
+          ${r.totalScore?`<div class="rscore" style="color:${col}">${r.totalScore}타</div>`:""}
+          <div class="rclub">클럽 ⭐ ${r.avg||"-"}</div>
+        </div>
+      </div>
+      <div class="ractions">
+        <button class="raction edit" onclick="startEdit(${r.id})">✏️ 수정</button>
+        <button class="raction del"  onclick="delRound(${r.id})">🗑️ 삭제</button>
+      </div>
+    </div>`;
+  }).join("") + "</div>";
+}
+
+// ── Detail ────────────────────────────────────────────────────────────────
+function showDetail(id) {
+  const r = rounds.find(x=>x.id===id); if (!r) return;
+  const sc = Number(r.totalScore);
+  const col = sc<=80?"#4ade80":sc<=90?"#facc15":"#fb923c";
+
+  const clubRows = GROUPS.map(g => {
+    const gc = CLUBS.filter(c=>c.group===g.id && r.scores[c.id]!=null);
+    if (!gc.length) return "";
+    const rows = gc.map(c => {
+      const s=r.scores[c.id], isNA=s==="na", memo=r.memos?.[c.id]||"";
+      const scol = isNA ? "#222" : scoreColor(s);
+      const dots = isNA ? "" : [1,2,3,4,5].map(v=>`<div class="dot" style="background:${v<=s?scoreColor(s):"#222"}"></div>`).join("");
+      return `<div style="padding:10px 12px;border-bottom:1px solid #111">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:6px">
+          <div style="display:flex;align-items:center;gap:6px;flex:1">
+            <div style="width:20px;height:20px;flex-shrink:0;font-size:15px">${c.emoji}</div>
+            <span style="font-size:13px;color:${isNA?"#333":"#ddd"};font-weight:700;text-decoration:${isNA?"line-through":"none"}">${c.label}</span>
+          </div>
+          ${isNA
+            ? `<span style="font-size:10px;color:#333;font-style:italic">미사용</span>`
+            : `<div class="dots">${dots}<span style="font-size:13px;color:${scol};margin-left:5px;font-weight:900">${s}/5</span></div>`}
+        </div>
+        ${memo?`<div style="font-size:13px;color:#fff;font-weight:500;margin-top:6px;padding-left:26px;line-height:1.6">💬 ${memo}</div>`:""}
+      </div>`;
+    }).join("");
+    return `<div style="background:#090909;border-radius:10px;overflow:hidden;margin-bottom:8px;border:1px solid #121212">
+      <div style="background:${g.bg};border-left:4px solid ${g.accent};padding:5px 12px;font-size:11px;font-weight:700;color:${g.accent};letter-spacing:1px">${g.label}</div>
+      ${rows}</div>`;
+  }).join("");
+
+  document.getElementById("dcontent").innerHTML = `
+    <button class="backbtn" onclick="goView('history',document.querySelectorAll('.tab')[1])">← 목록으로</button>
+
+    ${r.photo?`<div style="margin-bottom:12px;border-radius:10px;overflow:hidden;border:1px solid #1a3a22">
+      <img src="${r.photo}" style="width:100%;display:block">
+    </div>`:""}
+
+    <div class="sumcard" style="display:flex;margin:0 0 12px">
+      <div>
+        <div style="font-weight:700;font-size:16px;color:#e0e0e0;margin-bottom:2px">${r.course}</div>
+        <div style="font-size:10px;color:#2a4a2a;margin-bottom:8px">${r.date||""}</div>
+        ${r.totalScore?`<div class="sumlbl">총 타수</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:34px;color:${col};line-height:1">${r.totalScore}</div>`:""}
+        <div class="sumlbl" style="margin-top:6px">클럽 종합 평점</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:#facc15;line-height:1">${r.avg||"-"} / 5.0</div>
+      </div>
+      <svg class="radar" width="155" height="155" id="radar-d"></svg>
+    </div>
+
+    ${clubRows}
+
+    ${r.comment?`
+    <div style="margin-bottom:10px;background:#0d1a10;border:1px solid #1e3a22;border-radius:10px;padding:12px 14px">
+      <div style="font-size:10px;color:#4ade80;font-weight:700;letter-spacing:1px;margin-bottom:6px">📝 오늘 경기 총평</div>
+      <div style="font-size:14px;color:#fff;font-weight:500;line-height:1.7;white-space:pre-wrap">${r.comment}</div>
+    </div>`:""}
+
+    <div class="d-actions">
+      <button class="d-btn share" onclick="shareRound(${r.id})">📤 공유</button>
+      <button class="d-btn edit" onclick="startEdit(${r.id})">✏️ 수정</button>
+      <button class="d-btn del"  onclick="delRound(${r.id})">🗑️ 삭제</button>
+    </div>`;
+
+  drawRadar(r.scores, document.getElementById("radar-d"));
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("on"));
+  document.getElementById("view-detail").classList.add("on");
+  window.scrollTo(0,0);
+}
+
+// ── Share ─────────────────────────────────────────────────────────────────
+let shareBlob = null;
+
+function shareRound(id) {
+  toast("이미지 생성 중...");
+
+  // Hide action buttons temporarily during capture
+  const actions = document.querySelector(".d-actions");
+  const backBtn = document.querySelector(".backbtn");
+  if (actions) actions.style.display = "none";
+  if (backBtn) backBtn.style.display = "none";
+
+  const target = document.getElementById("dcontent");
+
+  html2canvas(target, {
+    backgroundColor: "#090909",
+    scale: 2,
+    useCORS: true,
+    logging: false,
+    scrollY: 0,
+    windowWidth: target.scrollWidth,
+  }).then(canvas => {
+    // Restore buttons
+    if (actions) actions.style.display = "flex";
+    if (backBtn) backBtn.style.display = "block";
+
+    canvas.toBlob(blob => {
+      shareBlob = blob;
+      const url = URL.createObjectURL(blob);
+      document.getElementById("share-img").src = url;
+      document.getElementById("share-overlay").classList.add("on");
+    }, "image/png");
+  }).catch(() => {
+    if (actions) actions.style.display = "flex";
+    if (backBtn) backBtn.style.display = "block";
+    toast("이미지 생성 실패 😢");
+  });
+}
+
+function saveShareImg() {
+  if (!shareBlob) return;
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(shareBlob);
+  a.download = "golf-club-review.png";
+  a.click();
+  toast("📥 이미지 저장됨!");
+}
+
+function shareNative() {
+  if (!shareBlob) return;
+  const file = new File([shareBlob], "golf-club-review.png", {type:"image/png"});
+  if (navigator.canShare && navigator.canShare({files:[file]})) {
+    navigator.share({
+      title: "⛳ 골프 클럽 리뷰",
+      text: "내 클럽 성능 기록을 공유합니다!",
+      files: [file],
+    }).catch(()=>{});
+  } else {
+    // fallback: just save
+    saveShareImg();
+    toast("📥 저장 후 카톡에서 첨부하세요!");
+  }
+}
+
+function delRound(id) {
+  if (!confirm("이 기록을 삭제할까요?")) return;
+  rounds = rounds.filter(r=>r.id!==id);
+  persist();
+  document.getElementById("htab").textContent = `📋 기록 (${rounds.length})`;
+  goView("history", document.querySelectorAll(".tab")[1]);
+  toast("삭제되었습니다");
+}
+
+// ── Stats ─────────────────────────────────────────────────────────────────
+function renderStats() {
+  const el = document.getElementById("scontent");
+  if (!rounds.length) {
+    el.innerHTML = `<div style="text-align:center;padding:60px 20px;color:#252525">
+      <div style="font-size:44px;margin-bottom:8px">📊</div>
+      <div style="font-size:13px;color:#252525">기록이 없습니다</div>
+    </div>`;
+    return;
+  }
+
+  // 각 클럽별 모든 점수 수집
+  const clubData = {};
+  CLUBS.forEach(c => { clubData[c.id] = []; });
+  rounds.forEach(r => {
+    CLUBS.forEach(c => {
+      const s = r.scores?.[c.id];
+      if (typeof s === "number" && s > 0) clubData[c.id].push(s);
+    });
+  });
+
+  // 평균 계산 후 내림차순 정렬 (잘 맞는 클럽 → 낮은 클럽)
+  const ranked = CLUBS
+    .map(c => {
+      const vals = clubData[c.id];
+      const a = vals.length ? (vals.reduce((x,y)=>x+y,0)/vals.length) : null;
+      return { ...c, avg: a, count: vals.length };
+    })
+    .filter(c => c.avg !== null)
+    .sort((a, b) => b.avg - a.avg);
+
+  if (!ranked.length) {
+    el.innerHTML = `<div style="text-align:center;padding:40px;color:#333;font-size:13px">아직 클럽 점수 데이터가 없습니다</div>`;
+    return;
+  }
+
+  const totalRounds = rounds.length;
+  const maxAvg = Math.max(...ranked.map(c=>c.avg));
+
+  let html = `
+    <div style="margin-bottom:16px">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:#4ade80;letter-spacing:2px;margin-bottom:2px">📊 클럽별 누적 통계</div>
+      <div style="font-size:10px;color:#3a5a40">총 ${totalRounds}회 기록 기준 · 잘 맞는 클럽 → 개선 필요 클럽 순</div>
+    </div>
+
+    <!-- 전체 요약 -->
+    <div style="background:#0d1a10;border:1px solid #1e3a22;border-radius:10px;padding:12px;margin-bottom:14px;display:flex;gap:12px;flex-wrap:wrap">
+      <div style="flex:1;min-width:80px;text-align:center">
+        <div style="font-size:9px;color:#3a5a40;margin-bottom:2px">총 기록 수</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:#4ade80;line-height:1">${totalRounds}</div>
+      </div>
+      <div style="flex:1;min-width:80px;text-align:center">
+        <div style="font-size:9px;color:#3a5a40;margin-bottom:2px">최고 클럽</div>
+        <div style="font-size:12px;color:#4ade80;font-weight:700;line-height:1.3">${ranked[0].emoji} ${ranked[0].label}</div>
+        <div style="font-size:11px;color:#4ade80">${ranked[0].avg.toFixed(1)}/5</div>
+      </div>
+      <div style="flex:1;min-width:80px;text-align:center">
+        <div style="font-size:9px;color:#f87171;margin-bottom:2px">개선 필요</div>
+        <div style="font-size:12px;color:#f87171;font-weight:700;line-height:1.3">${ranked[ranked.length-1].emoji} ${ranked[ranked.length-1].label}</div>
+        <div style="font-size:11px;color:#f87171">${ranked[ranked.length-1].avg.toFixed(1)}/5</div>
+      </div>
+    </div>
+
+    <!-- 클럽별 랭킹 -->
+    <div style="background:#0b0b0b;border-radius:10px;overflow:hidden;border:1px solid #161616">`;
+
+  ranked.forEach((c, i) => {
+    const col = scoreColor(Math.round(c.avg));
+    const rank = i + 1;
+
+    // 이 클럽의 과거 코멘트 수집 (날짜 + 점수 + 메모)
+    const history = rounds
+      .filter(r => r.scores?.[c.id] && r.scores[c.id] !== "na")
+      .map(r => ({
+        date: r.date||"",
+        place: r.course||"",
+        score: r.scores[c.id],
+        memo: r.memos?.[c.id]||"",
+      }))
+      .reverse(); // 오래된 순
+
+    const historyHTML = history.length ? history.map(h => `
+      <div style="padding:7px 10px;border-bottom:1px solid #0e0e0e;display:flex;gap:8px;align-items:flex-start">
+        <div style="flex-shrink:0">
+          <div style="font-size:11px;color:#fff;font-weight:700">${h.date}</div>
+          <div style="font-size:10px;color:#aaa">${h.place}</div>
+        </div>
+        <div style="flex:1">
+          <span style="font-size:12px;color:${scoreColor(h.score)};font-weight:900">${h.score}/5</span>
+          ${h.memo?`<div style="font-size:12px;color:#fff;margin-top:2px">💬 ${h.memo}</div>`:"<div style='font-size:10px;color:#2a2a2a;margin-top:2px'>메모 없음</div>"}
+        </div>
+      </div>`).join("") :
+      `<div style="font-size:11px;color:#333;padding:10px">코멘트 없음</div>`;
+
+    html += `
+      <div style="border-bottom:1px solid #111">
+        <div onclick="toggleClubHistory('ch-${c.id}')"
+          style="display:flex;align-items:center;gap:8px;padding:12px 12px;cursor:pointer;active:background:#111">
+          <span style="font-size:11px;color:#333;font-weight:700;width:18px">${rank}</span>
+          <span style="font-size:15px">${c.emoji}</span>
+          <span style="font-size:13px;color:#ddd;font-weight:700;flex:1">${c.label}</span>
+          <span style="font-size:10px;color:#444;margin-right:4px">${c.count}회</span>
+          <span style="font-size:16px;color:${col};font-weight:900;min-width:36px;text-align:right">${c.avg.toFixed(1)}</span>
+          <span style="font-size:10px;color:#333;margin-left:4px">▼</span>
+        </div>
+        <div id="ch-${c.id}" style="display:none;background:#0a0a0a;border-top:1px solid #161616">
+          ${historyHTML}
+        </div>
+      </div>`;
+  });
+
+  html += `</div>`;
+  el.innerHTML = html;
+}
+
+// ── Toggle club history in stats ──────────────────────────────────────────
+function toggleClubHistory(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const isOpen = el.style.display !== "none";
+  el.style.display = isOpen ? "none" : "block";
+  // 화살표 방향 바꾸기
+  const arrow = el.previousElementSibling?.querySelector("span:last-child");
+  if (arrow) arrow.textContent = isOpen ? "▼" : "▲";
+}
+
+// ── Video ─────────────────────────────────────────────────────────────────
+const VKEY = "golf_videos_v1";
+let videos = [];
+let vCat = "field";
+let vFilter = "all";
+
+const CAT_COLORS = {
+  field:    { bg:"#1a3a2a", accent:"#4ade80", label:"⛳ 필드" },
+  practice: { bg:"#1a2a3a", accent:"#60a5fa", label:"🏌️ 연습장" },
+  other:    { bg:"#2a1a3a", accent:"#a78bfa", label:"📹 기타" },
+};
+
+function loadVideos() {
+  try { videos = JSON.parse(localStorage.getItem(VKEY)||"[]"); } catch { videos=[]; }
+}
+function saveVideos() { localStorage.setItem(VKEY, JSON.stringify(videos)); }
+
+function selectVCat(cat) {
+  vCat = cat;
+  Object.keys(CAT_COLORS).forEach(k => {
+    const btn = document.getElementById("vcat-"+k);
+    if (!btn) return;
+    const c = CAT_COLORS[k];
+    btn.style.background = k===cat ? c.accent : "transparent";
+    btn.style.color = k===cat ? "#000" : c.accent+"88";
+    btn.style.borderColor = k===cat ? c.accent : c.accent+"33";
+  });
+}
+
+function extractYouTubeId(url) {
+  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/|embed\/))([a-zA-Z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
+function addVideo() {
+  const title = document.getElementById("v-title").value.trim();
+  const url   = document.getElementById("v-url").value.trim();
+  const date  = document.getElementById("v-date").value.trim();
+  const memo  = document.getElementById("v-memo").value.trim();
+  if (!title || !url) { toast("제목과 링크를 입력해주세요"); return; }
+  const ytId = extractYouTubeId(url);
+  if (!ytId) { toast("유튜브 링크를 확인해주세요"); return; }
+
+  videos.unshift({ id: Date.now(), title, url, ytId, date, memo, cat: vCat });
+  saveVideos();
+  updateVideoTab();
+
+  // reset
+  document.getElementById("v-title").value = "";
+  document.getElementById("v-url").value = "";
+  document.getElementById("v-date").value = "";
+  document.getElementById("v-memo").value = "";
+  renderVideoList();
+  toast("✅ 영상 추가됨!");
+}
+
+function updateVideoTab() {
+  document.getElementById("vtab").textContent = `🎬 영상 (${videos.length})`;
+}
+
+function filterVideo(f) {
+  vFilter = f;
+  ["all","field","practice","other"].forEach(k => {
+    const btn = document.getElementById("vf-"+k);
+    if (!btn) return;
+    const c = k==="all" ? {accent:"#4ade80"} : CAT_COLORS[k];
+    btn.style.background = k===f ? c.accent : "transparent";
+    btn.style.color = k===f ? "#000" : (k==="all"?"#3a5a3a":c.accent+"88");
+    btn.style.fontWeight = k===f ? "700" : "400";
+    btn.style.borderColor = k===f ? c.accent : (k==="all"?"#1e3a2a":c.accent+"33");
+  });
+  renderVideoList();
+}
+
+function renderVideoList() {
+  const el = document.getElementById("vlist");
+  const filtered = vFilter==="all" ? videos : videos.filter(v=>v.cat===vFilter);
+  if (!filtered.length) {
+    el.innerHTML = `<div style="text-align:center;padding:40px 20px;color:#252525">
+      <div style="font-size:36px;margin-bottom:8px">🎬</div>
+      <div style="font-size:13px">영상이 없습니다</div>
+      <div style="font-size:11px;margin-top:4px;color:#1a1a1a">유튜브 비공개 링크를 추가해보세요</div>
+    </div>`;
+    return;
+  }
+  el.innerHTML = filtered.map(v => {
+    const c = CAT_COLORS[v.cat]||CAT_COLORS.other;
+    return `<div style="background:#0b0b0b;border:1px solid #161616;border-radius:10px;overflow:hidden;margin-bottom:12px">
+      <!-- 유튜브 임베드 -->
+      <div style="position:relative;padding-top:56.25%;background:#000">
+        <iframe
+          src="https://www.youtube.com/embed/${v.ytId}"
+          style="position:absolute;top:0;left:0;width:100%;height:100%;border:none"
+          allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"
+          allowfullscreen loading="lazy">
+        </iframe>
+      </div>
+      <!-- 정보 -->
+      <div style="padding:10px 12px">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+          <span style="font-size:9px;color:${c.accent};font-weight:700;background:${c.bg};padding:2px 7px;border-radius:4px">${c.label}</span>
+          <span style="font-size:10px;color:#444">${v.date||""}</span>
+          <button onclick="deleteVideo(${v.id})"
+            style="margin-left:auto;background:transparent;border:none;color:#333;font-size:14px;cursor:pointer">🗑️</button>
+        </div>
+        <div style="font-size:14px;color:#fff;font-weight:700;margin-bottom:${v.memo?'6px':'0'}">${v.title}</div>
+        ${v.memo?`<div style="font-size:12px;color:#aaa;line-height:1.5">💬 ${v.memo}</div>`:""}
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function deleteVideo(id) {
+  if (!confirm("이 영상을 삭제할까요?")) return;
+  videos = videos.filter(v=>v.id!==id);
+  saveVideos(); updateVideoTab(); renderVideoList();
+  toast("삭제되었습니다");
+}
+
+// ── iOS install hint ──────────────────────────────────────────────────────
+if (/iphone|ipad|ipod/i.test(navigator.userAgent) && !navigator.standalone) {
+  setTimeout(()=>document.getElementById("ios-hint").classList.add("on"), 1500);
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────
+load();
+loadVideos();
+document.getElementById("htab").textContent = `📋 기록 (${rounds.length})`;
+updateVideoTab();
+document.getElementById("f-date").value = new Date().toISOString().slice(0,10);
+buildClubs();
+selectVCat("field");
+</script>
+</body>
+</html>
